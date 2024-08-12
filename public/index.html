@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>URL Shortener</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container mt-5">
+    <h1 class="text-center">URL Shortener</h1>
+    <form id="urlForm" class="mt-4">
+      <div class="mb-3">
+        <input type="url" class="form-control" id="originalUrl" placeholder="Enter URL" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Shorten URL</button>
+    </form>
+    <div id="result" class="mt-4"></div>
+  </div>
+
+  <script>
+    document.getElementById('urlForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const originalUrl = document.getElementById('originalUrl').value;
+
+      const response = await fetch('/shorten', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ originalUrl }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        document.getElementById('result').innerHTML = `
+          <p>Short URL: <a href="${data.shortUrl}" target="_blank">${data.shortUrl}</a></p>
+        `;
+      } else {
+        document.getElementById('result').innerHTML = `<p>${data}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
